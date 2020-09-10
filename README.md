@@ -4,7 +4,6 @@
 
 Local FS storage support for Guillotina.
 
-
 ## Example
 
 Example config.json entry:
