@@ -1,0 +1,15 @@
+dist: bionic
+language: python
+python:
+  - "3.7"
+  - "3.8"
+install:
+  - pip install poetry
+  - poetry install
+script:
+  - isort -c -rc guillotina_localstorage
+  - flake8 guillotina_localstorage --config=setup.cfg
+  - black guillotina_localstorage --check
+  - pytest --cov=guillotina_localstorage -v --cov-report term-missing guillotina_localstorage
+after_success:
+  - codecov
