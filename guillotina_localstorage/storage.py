@@ -17,7 +17,10 @@ from guillotina.schema import Object
 from zope.interface import implementer
 
 import aiofiles
+import logging
 import os
+
+logger = logging.getLogger("guillotina_localstorage")
 
 CHUNK_SIZE = 5 * 1024 * 1024
 
@@ -84,9 +87,11 @@ class DiskFileStorageManager:
         # Ensure folder exists
         head, _ = os.path.split(path)
         if not os.path.exists(head):
+            logger.debug(f"mkdir {head}...")
             os.makedirs(head, 0o755)
 
         # Create the file
+        logger.debug(f"create file {path}...")
         async with aiofiles.open(path, "wb+"):
             pass
 
@@ -101,12 +106,15 @@ class DiskFileStorageManager:
             raise HTTPNotFound
 
         path = self.get_full_path(self.get_file_path(file=disk_file))
+        logger.debug(f"open {path}...")
         async with aiofiles.open(path, "rb") as f:
             while True:
+                logger.debug(f"read {CHUNK_SIZE} {path}...")
                 b = await f.read(CHUNK_SIZE)
                 if not b:
                     break
                 yield b
+        logger.debug(f"done iter_data {path}...")
 
     async def append(self, dm, iterable, offset):
         """
@@ -114,13 +122,19 @@ class DiskFileStorageManager:
         """
         size = 0
         path = self.get_full_path(self.get_file_path(dm=dm))
+        logger.debug(f"open {path}...")
         async with aiofiles.open(path, "wb") as f:
+            logger.debug(f"seek {offset} {path}...")
             await f.seek(offset)
             async for chunk in iterable:
                 size += len(chunk)
+                logger.debug(f"write {path}...")
                 await f.write(chunk)
+            logger.debug(f"flush {path}...")
             await f.flush()
+            logger.debug(f"fsync {path}...")
             await async_os_fsync(f.fileno())
+        logger.debug(f"done append {path}...")
         return size
 
     async def copy(self, to_storage_manager, to_dm):
