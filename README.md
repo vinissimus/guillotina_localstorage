@@ -11,7 +11,7 @@ Example config.json entry:
 ```json
 {
     "applications": [
-        # ...,
+        "...",
         "guillotina_localstorage"
     ],
     "storage": {"upload_folder": "/tmp"}
