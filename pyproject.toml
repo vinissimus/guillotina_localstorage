@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "guillotina_localstorage"
-version = "0.1.1"
+version = "0.2.0"
 description = "Local FS storage support for Guillotina"
 license = "GPL-3.0-only"
 readme = "README.md"
@@ -9,7 +9,7 @@ authors = ["Jordi Masip <jordi@masip.cat>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 guillotina = ">5.3.48"
-aiofiles = "^0.5.0"
+aiofiles = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 aiohttp = "^3.6.2"
